@@ -334,10 +334,26 @@ const Index = () => {
     ul { margin: 10px 0; padding-left: 20px; }
     li { margin: 5px 0; }
     .notes { background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; font-style: italic; }
-    @media print { body { padding: 0; } .section { break-inside: avoid; } }
+    .print-btn { 
+      background: #1e88e5; color: white; border: none; padding: 12px 24px; 
+      font-size: 16px; border-radius: 8px; cursor: pointer; margin: 10px 5px;
+    }
+    .print-btn:hover { background: #1565c0; }
+    .no-print { margin-bottom: 20px; }
+    @media print { 
+      body { padding: 0; } 
+      .section { break-inside: avoid; } 
+      .no-print { display: none; }
+    }
   </style>
 </head>
 <body>
+  <div class="no-print" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <strong>📄 Save as PDF:</strong> Click the button below or press <kbd>Ctrl+P</kbd> (Windows) / <kbd>Cmd+P</kbd> (Mac), then select "Save as PDF" as the destination.
+    <br/><br/>
+    <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  </div>
+
   <h1>IEP Meeting Preparation Tool</h1>
   <p><em>Exported on ${new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</em></p>
 

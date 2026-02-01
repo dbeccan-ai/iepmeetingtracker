@@ -60,101 +60,107 @@ const DecisionTracker = ({ decisions, onDecisionsChange }: DecisionTrackerProps)
         Add Decision
       </button>
 
-      {/* Table Header */}
-      <div className="hidden lg:grid grid-cols-[180px_1fr_1fr_160px_140px_50px] gap-4 mb-4 px-2">
-        <div className="text-sm font-semibold text-card-foreground">Topic / Issue</div>
-        <div className="text-sm font-semibold text-card-foreground">What the Team Said / Decided</div>
-        <div className="text-sm font-semibold text-card-foreground">Services/Changes Agreed On</div>
-        <div className="text-sm font-semibold text-card-foreground">Who is Responsible</div>
-        <div className="text-sm font-semibold text-card-foreground">By When</div>
-        <div></div>
-      </div>
-
-      {/* Decision Rows */}
-      <div className="space-y-4">
-        {decisions.map((decision) => (
-          <div
-            key={decision.id}
-            className="grid grid-cols-1 lg:grid-cols-[180px_1fr_1fr_160px_140px_50px] gap-4 items-start"
-          >
-            {/* Topic/Issue */}
-            <div>
-              <label className="lg:hidden iep-label">Topic / Issue</label>
-              <input
-                type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="Reading Support"
-                value={decision.topic}
-                onChange={(e) => updateDecision(decision.id, "topic", e.target.value)}
-                list={`topics-list-${decision.id}`}
-              />
-              <datalist id={`topics-list-${decision.id}`}>
-                {defaultTopics.map((topic) => (
-                  <option key={topic} value={topic} />
-                ))}
-              </datalist>
-            </div>
-            
-            {/* What the Team Said / Decided */}
-            <div>
-              <label className="lg:hidden iep-label">What the Team Said / Decided</label>
-              <textarea
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[60px] resize-y"
-                placeholder="What was discussed..."
-                value={decision.discussed}
-                onChange={(e) => updateDecision(decision.id, "discussed", e.target.value)}
-              />
-            </div>
-            
-            {/* Services/Changes Agreed On */}
-            <div>
-              <label className="lg:hidden iep-label">Services/Changes Agreed On</label>
-              <textarea
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[60px] resize-y"
-                placeholder="What was agreed upon..."
-                value={decision.agreedOn}
-                onChange={(e) => updateDecision(decision.id, "agreedOn", e.target.value)}
-              />
-            </div>
-            
-            {/* Who is Responsible */}
-            <div>
-              <label className="lg:hidden iep-label">Who is Responsible</label>
-              <input
-                type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="Name or role"
-                value={decision.responsible}
-                onChange={(e) => updateDecision(decision.id, "responsible", e.target.value)}
-              />
-            </div>
-            
-            {/* By When */}
-            <div>
-              <label className="lg:hidden iep-label">By When</label>
-              <div className="relative">
-                <input
-                  type="date"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 pr-10"
-                  value={decision.byWhen}
-                  onChange={(e) => updateDecision(decision.id, "byWhen", e.target.value)}
-                />
-                <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-              </div>
-            </div>
-            
-            {/* Delete Button */}
-            <div className="flex justify-center items-start pt-2">
-              <button
-                onClick={() => removeDecision(decision.id)}
-                className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
-                aria-label="Remove decision"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        ))}
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b-2 border-gray-200">
+              <th className="text-left py-3 px-2 text-sm font-semibold text-card-foreground min-w-[150px]">
+                Topic / Issue
+              </th>
+              <th className="text-left py-3 px-2 text-sm font-semibold text-card-foreground min-w-[180px]">
+                What the Team Said / Decided
+              </th>
+              <th className="text-left py-3 px-2 text-sm font-semibold text-card-foreground min-w-[180px]">
+                Services/Changes Agreed On
+              </th>
+              <th className="text-left py-3 px-2 text-sm font-semibold text-card-foreground min-w-[140px]">
+                Who is Responsible
+              </th>
+              <th className="text-left py-3 px-2 text-sm font-semibold text-card-foreground min-w-[130px]">
+                By When
+              </th>
+              <th className="w-12"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {decisions.map((decision) => (
+              <tr key={decision.id} className="border-b border-gray-100">
+                {/* Topic/Issue */}
+                <td className="py-3 px-2 align-top">
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    placeholder="Reading Support"
+                    value={decision.topic}
+                    onChange={(e) => updateDecision(decision.id, "topic", e.target.value)}
+                    list={`topics-list-${decision.id}`}
+                  />
+                  <datalist id={`topics-list-${decision.id}`}>
+                    {defaultTopics.map((topic) => (
+                      <option key={topic} value={topic} />
+                    ))}
+                  </datalist>
+                </td>
+                
+                {/* What the Team Said / Decided */}
+                <td className="py-3 px-2 align-top">
+                  <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[60px] resize-y"
+                    placeholder="What was discussed..."
+                    value={decision.discussed}
+                    onChange={(e) => updateDecision(decision.id, "discussed", e.target.value)}
+                  />
+                </td>
+                
+                {/* Services/Changes Agreed On */}
+                <td className="py-3 px-2 align-top">
+                  <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[60px] resize-y"
+                    placeholder="What was agreed upon..."
+                    value={decision.agreedOn}
+                    onChange={(e) => updateDecision(decision.id, "agreedOn", e.target.value)}
+                  />
+                </td>
+                
+                {/* Who is Responsible */}
+                <td className="py-3 px-2 align-top">
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    placeholder="Name or role"
+                    value={decision.responsible}
+                    onChange={(e) => updateDecision(decision.id, "responsible", e.target.value)}
+                  />
+                </td>
+                
+                {/* By When */}
+                <td className="py-3 px-2 align-top">
+                  <div className="relative">
+                    <input
+                      type="date"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 pr-10"
+                      value={decision.byWhen}
+                      onChange={(e) => updateDecision(decision.id, "byWhen", e.target.value)}
+                    />
+                    <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                  </div>
+                </td>
+                
+                {/* Delete Button */}
+                <td className="py-3 px-2 align-top text-center">
+                  <button
+                    onClick={() => removeDecision(decision.id)}
+                    className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
+                    aria-label="Remove decision"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {decisions.length === 0 && (
