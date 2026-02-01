@@ -57,6 +57,16 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Custom IEP colors
+        "iep-blue": {
+          DEFAULT: "hsl(var(--iep-blue))",
+          dark: "hsl(var(--iep-blue-dark))",
+        },
+        "iep-gold": {
+          DEFAULT: "hsl(var(--iep-gold))",
+          dark: "hsl(var(--iep-gold-dark))",
+        },
+        "iep-orange": "hsl(var(--iep-orange))",
       },
       borderRadius: {
         lg: "var(--radius)",
