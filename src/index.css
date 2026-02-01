@@ -2,56 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* IEP Tracker Design System - Blue & Gold Educational Theme */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 100% 50%;
+    --foreground: 0 0% 100%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 20% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 20% 20%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 45 100% 50%;
+    --primary-foreground: 220 20% 15%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 100% 45%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 30% 90%;
+    --muted-foreground: 220 10% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 45 100% 50%;
+    --accent-foreground: 220 20% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 220 13% 85%;
+    --input: 220 13% 85%;
+    --ring: 45 100% 50%;
 
     --radius: 0.5rem;
 
+    /* Custom IEP Colors */
+    --iep-blue: 210 100% 50%;
+    --iep-blue-dark: 210 100% 40%;
+    --iep-gold: 45 100% 50%;
+    --iep-gold-dark: 40 100% 45%;
+    --iep-orange: 25 95% 53%;
+    --iep-section-header: 45 100% 50%;
+    --iep-card-shadow: 210 100% 30%;
+
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -65,7 +65,7 @@ All colors MUST be HSL.
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    --primary: 45 100% 50%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -101,5 +101,84 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .iep-card {
+    @apply bg-card rounded-lg shadow-lg border-l-4 border-l-accent p-6;
+  }
+
+  .iep-section-title {
+    @apply text-accent font-bold text-xl mb-4;
+  }
+
+  .iep-subsection-title {
+    @apply text-iep-orange font-semibold text-lg mb-3;
+  }
+
+  .iep-label {
+    @apply text-card-foreground font-medium text-sm mb-1.5 block;
+  }
+
+  .iep-input {
+    @apply w-full px-3 py-2.5 border border-input rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent;
+  }
+
+  .iep-textarea {
+    @apply w-full px-3 py-2.5 border border-input rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-y min-h-[100px];
+  }
+
+  .iep-select {
+    @apply w-full px-3 py-2.5 border border-input rounded-md bg-white text-card-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent appearance-none cursor-pointer;
+  }
+
+  .iep-checkbox-label {
+    @apply flex items-start gap-3 text-card-foreground cursor-pointer py-2;
+  }
+
+  .iep-button-primary {
+    @apply bg-primary hover:bg-iep-gold-dark text-primary-foreground font-semibold px-5 py-2.5 rounded-md transition-colors flex items-center gap-2;
+  }
+
+  .iep-button-secondary {
+    @apply bg-secondary hover:bg-iep-blue-dark text-secondary-foreground font-semibold px-5 py-2.5 rounded-md transition-colors flex items-center gap-2;
+  }
+
+  .iep-button-delete {
+    @apply bg-destructive/10 hover:bg-destructive/20 text-destructive p-2 rounded transition-colors;
+  }
+
+  .iep-tab {
+    @apply flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap;
+  }
+
+  .iep-tab-active {
+    @apply bg-white/20 border-b-2 border-white;
+  }
+
+  .iep-tab-inactive {
+    @apply hover:bg-white/10;
+  }
+
+  .iep-progress-bar {
+    @apply h-3 bg-iep-blue-dark rounded-full overflow-hidden;
+  }
+
+  .iep-progress-fill {
+    @apply h-full bg-accent rounded-full transition-all duration-300;
+  }
+
+  .iep-accordion-trigger {
+    @apply flex items-center justify-between w-full p-4 bg-accent text-accent-foreground font-semibold rounded-lg hover:bg-iep-gold-dark transition-colors;
+  }
+
+  .iep-info-box {
+    @apply bg-blue-50 border border-blue-200 rounded-lg p-4 text-card-foreground;
+  }
+
+  .iep-tip-box {
+    @apply bg-amber-50 border border-amber-200 rounded-lg p-4 text-card-foreground;
   }
 }
