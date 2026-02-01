@@ -1,4 +1,5 @@
 import { Plus, Trash2, Calendar } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export interface Decision {
   id: string;
@@ -14,16 +15,18 @@ interface DecisionTrackerProps {
   onDecisionsChange: (decisions: Decision[]) => void;
 }
 
-const defaultTopics = [
-  "Reading Support",
-  "Math Support",
-  "Behavior Plan",
-  "Accommodations",
-  "Progress Updates",
-  "Other Parent Concerns",
-];
-
 const DecisionTracker = ({ decisions, onDecisionsChange }: DecisionTrackerProps) => {
+  const { t } = useLanguage();
+
+  const defaultTopics = [
+    t("readingSupport"),
+    t("mathSupport"),
+    t("behaviorPlan"),
+    t("accommodations"),
+    t("progressUpdates"),
+    t("otherConcerns"),
+  ];
+
   const addDecision = () => {
     const newDecision: Decision = {
       id: crypto.randomUUID(),
@@ -49,15 +52,15 @@ const DecisionTracker = ({ decisions, onDecisionsChange }: DecisionTrackerProps)
   return (
     <div className="iep-card">
       <div className="mb-6">
-        <h2 className="iep-section-title">During-Meeting Decision Tracker</h2>
+        <h2 className="iep-section-title">{t("decisionTrackerTitle")}</h2>
         <p className="text-sm text-muted-foreground">
-          Fill this out during the meeting so you don't walk out thinking, "Wait, what did we even decide?"
+          {t("decisionTrackerDesc")}
         </p>
       </div>
 
       <button onClick={addDecision} className="iep-button-primary mb-6">
         <Plus className="w-4 h-4" />
-        Add Decision
+        {t("addDecision")}
       </button>
 
       {/* Table */}
@@ -66,19 +69,19 @@ const DecisionTracker = ({ decisions, onDecisionsChange }: DecisionTrackerProps)
           <thead>
             <tr className="border-b-2 border-gray-200">
               <th className="text-left py-3 px-2 text-sm font-semibold text-card-foreground min-w-[150px]">
-                Topic / Issue
+                {t("topicIssue")}
               </th>
               <th className="text-left py-3 px-2 text-sm font-semibold text-card-foreground min-w-[180px]">
-                What the Team Said / Decided
+                {t("whatTeamSaid")}
               </th>
               <th className="text-left py-3 px-2 text-sm font-semibold text-card-foreground min-w-[180px]">
-                Services/Changes Agreed On
+                {t("servicesAgreed")}
               </th>
               <th className="text-left py-3 px-2 text-sm font-semibold text-card-foreground min-w-[140px]">
-                Who is Responsible
+                {t("whoResponsible")}
               </th>
               <th className="text-left py-3 px-2 text-sm font-semibold text-card-foreground min-w-[130px]">
-                By When
+                {t("byWhen")}
               </th>
               <th className="w-12"></th>
             </tr>
@@ -91,7 +94,7 @@ const DecisionTracker = ({ decisions, onDecisionsChange }: DecisionTrackerProps)
                   <input
                     type="text"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                    placeholder="Reading Support"
+                    placeholder={t("topicPlaceholder")}
                     value={decision.topic}
                     onChange={(e) => updateDecision(decision.id, "topic", e.target.value)}
                     list={`topics-list-${decision.id}`}
@@ -107,7 +110,7 @@ const DecisionTracker = ({ decisions, onDecisionsChange }: DecisionTrackerProps)
                 <td className="py-3 px-2 align-top">
                   <textarea
                     className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[60px] resize-y"
-                    placeholder="What was discussed..."
+                    placeholder={t("discussedPlaceholder")}
                     value={decision.discussed}
                     onChange={(e) => updateDecision(decision.id, "discussed", e.target.value)}
                   />
@@ -117,7 +120,7 @@ const DecisionTracker = ({ decisions, onDecisionsChange }: DecisionTrackerProps)
                 <td className="py-3 px-2 align-top">
                   <textarea
                     className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[60px] resize-y"
-                    placeholder="What was agreed upon..."
+                    placeholder={t("agreedPlaceholder")}
                     value={decision.agreedOn}
                     onChange={(e) => updateDecision(decision.id, "agreedOn", e.target.value)}
                   />
@@ -128,7 +131,7 @@ const DecisionTracker = ({ decisions, onDecisionsChange }: DecisionTrackerProps)
                   <input
                     type="text"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                    placeholder="Name or role"
+                    placeholder={t("responsiblePlaceholder")}
                     value={decision.responsible}
                     onChange={(e) => updateDecision(decision.id, "responsible", e.target.value)}
                   />
@@ -165,7 +168,7 @@ const DecisionTracker = ({ decisions, onDecisionsChange }: DecisionTrackerProps)
 
       {decisions.length === 0 && (
         <p className="text-center text-muted-foreground py-8">
-          No decisions tracked yet. Click "Add Decision" during your meeting.
+          {t("noDecisions")}
         </p>
       )}
     </div>
