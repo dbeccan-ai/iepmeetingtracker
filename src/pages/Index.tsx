@@ -303,28 +303,179 @@ const Index = () => {
   };
 
   const handleExport = () => {
-    const data = {
-      studentInfo,
-      contactInfo,
-      attendees,
-      documents,
-      reflection,
-      questionCategories,
-      decisions,
-      immediateItems,
-      weekItems,
-      monthlyLogs,
-      beforeMeeting,
-      afterMeeting,
+    // Create a printable HTML document
+    const formatDate = (dateStr: string) => {
+      if (!dateStr) return "";
+      const date = new Date(dateStr);
+      return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
     };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IEP Meeting Preparation - ${studentInfo.name || "Student"}</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; color: #333; }
+    h1 { color: #1e88e5; border-bottom: 3px solid #1e88e5; padding-bottom: 10px; }
+    h2 { color: #f9a825; margin-top: 30px; border-bottom: 2px solid #f9a825; padding-bottom: 5px; }
+    h3 { color: #1e88e5; margin-top: 20px; }
+    .section { background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 15px 0; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .info-item { margin: 5px 0; }
+    .label { font-weight: bold; color: #666; }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #1e88e5; color: white; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    .checklist-item { margin: 8px 0; }
+    .checked { color: #4caf50; }
+    .unchecked { color: #999; }
+    ul { margin: 10px 0; padding-left: 20px; }
+    li { margin: 5px 0; }
+    .notes { background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; font-style: italic; }
+    @media print { body { padding: 0; } .section { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+  <h1>IEP Meeting Preparation Tool</h1>
+  <p><em>Exported on ${new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</em></p>
+
+  <h2>1. Meeting Snapshot</h2>
+  <div class="section">
+    <h3>Student Information</h3>
+    <div class="info-grid">
+      <div class="info-item"><span class="label">Student Name:</span> ${studentInfo.name || "Not provided"}</div>
+      <div class="info-item"><span class="label">Grade:</span> ${studentInfo.grade || "Not provided"}</div>
+      <div class="info-item"><span class="label">School:</span> ${studentInfo.school || "Not provided"}</div>
+      <div class="info-item"><span class="label">Meeting Date:</span> ${formatDate(studentInfo.meetingDate) || "Not provided"}</div>
+      <div class="info-item"><span class="label">Meeting Type:</span> ${studentInfo.meetingType || "Not provided"}</div>
+    </div>
+    ${studentInfo.primaryConcerns ? `<div class="info-item" style="margin-top:15px"><span class="label">Primary Concerns:</span><br/>${studentInfo.primaryConcerns}</div>` : ""}
+    
+    <h3>Parent/Guardian Contact</h3>
+    <div class="info-grid">
+      <div class="info-item"><span class="label">Name:</span> ${contactInfo.name || "Not provided"}</div>
+      <div class="info-item"><span class="label">Phone:</span> ${contactInfo.phone || "Not provided"}</div>
+      <div class="info-item"><span class="label">Email:</span> ${contactInfo.email || "Not provided"}</div>
+    </div>
+  </div>
+
+  <h2>2. Attendee List</h2>
+  <div class="section">
+    <table>
+      <tr><th>Role</th><th>Name</th><th>Attending?</th><th>Contact Info</th></tr>
+      ${attendees.filter(a => a.name || a.attending).map(a => `
+        <tr>
+          <td>${a.role}</td>
+          <td>${a.name || "-"}</td>
+          <td>${a.attending || "-"}</td>
+          <td>${a.contactInfo || "-"}</td>
+        </tr>
+      `).join("")}
+    </table>
+  </div>
+
+  <h2>3. Pre-Meeting Preparation</h2>
+  <div class="section">
+    <h3>Documents Gathered</h3>
+    ${documents.map(d => `
+      <div class="checklist-item ${d.checked ? "checked" : "unchecked"}">
+        ${d.checked ? "✓" : "○"} ${d.label}
+      </div>
+    `).join("")}
+    
+    <h3>Parent Reflection</h3>
+    ${reflection.topConcerns ? `<div class="info-item"><span class="label">Top Concerns:</span><br/>${reflection.topConcerns}</div>` : ""}
+    ${reflection.strengths ? `<div class="info-item"><span class="label">Child's Strengths:</span><br/>${reflection.strengths}</div>` : ""}
+    ${reflection.challenges ? `<div class="info-item"><span class="label">Challenges at Home:</span><br/>${reflection.challenges}</div>` : ""}
+    ${reflection.homeSupports ? `<div class="info-item"><span class="label">Home Supports:</span><br/>${reflection.homeSupports}</div>` : ""}
+  </div>
+
+  <h2>4. Question Bank Notes</h2>
+  <div class="section">
+    ${questionCategories.filter(c => c.notes).map(c => `
+      <h3>${c.title}</h3>
+      <div class="notes">${c.notes}</div>
+    `).join("") || "<p>No notes recorded.</p>"}
+  </div>
+
+  <h2>5. Decisions Made During Meeting</h2>
+  <div class="section">
+    <table>
+      <tr>
+        <th>Topic/Issue</th>
+        <th>What Was Discussed</th>
+        <th>Agreed Upon</th>
+        <th>Responsible</th>
+        <th>By When</th>
+      </tr>
+      ${decisions.filter(d => d.topic || d.discussed || d.agreedOn).map(d => `
+        <tr>
+          <td>${d.topic || "-"}</td>
+          <td>${d.discussed || "-"}</td>
+          <td>${d.agreedOn || "-"}</td>
+          <td>${d.responsible || "-"}</td>
+          <td>${formatDate(d.byWhen) || "-"}</td>
+        </tr>
+      `).join("") || "<tr><td colspan='5'>No decisions recorded.</td></tr>"}
+    </table>
+  </div>
+
+  <h2>6. Follow-Up Tracker</h2>
+  <div class="section">
+    <h3>Immediate Follow-Up (24-48 hours)</h3>
+    ${immediateItems.map(item => `
+      <div class="checklist-item ${item.checked ? "checked" : "unchecked"}">
+        ${item.checked ? "✓" : "○"} ${item.label}
+      </div>
+    `).join("")}
+    
+    <h3>First Week Follow-Up</h3>
+    ${weekItems.map(item => `
+      <div class="checklist-item ${item.checked ? "checked" : "unchecked"}">
+        ${item.checked ? "✓" : "○"} ${item.label} ${item.date ? `(${formatDate(item.date)})` : ""}
+      </div>
+    `).join("")}
+    
+    ${monthlyLogs.length > 0 ? `
+      <h3>Monthly Progress Notes</h3>
+      ${monthlyLogs.map(log => `
+        <div class="info-item"><span class="label">${log.month}:</span> ${log.notes}</div>
+      `).join("")}
+    ` : ""}
+  </div>
+
+  <h2>7. Family Discussion Notes</h2>
+  <div class="section">
+    <h3>Before the Meeting (Child's Perspective)</h3>
+    ${beforeMeeting.feelings ? `<div class="info-item"><span class="label">How school feels:</span> ${beforeMeeting.feelings}</div>` : ""}
+    ${beforeMeeting.easyHard ? `<div class="info-item"><span class="label">What's easy/hard:</span> ${beforeMeeting.easyHard}</div>` : ""}
+    ${beforeMeeting.teachersToKnow ? `<div class="info-item"><span class="label">What teachers should know:</span> ${beforeMeeting.teachersToKnow}</div>` : ""}
+    ${beforeMeeting.gettingHelp ? `<div class="info-item"><span class="label">How help feels:</span> ${beforeMeeting.gettingHelp}</div>` : ""}
+    
+    <h3>After the Meeting</h3>
+    ${afterMeeting.whatTalkedAbout ? `<div class="info-item"><span class="label">What was discussed:</span> ${afterMeeting.whatTalkedAbout}</div>` : ""}
+    ${afterMeeting.schoolHelp ? `<div class="info-item"><span class="label">School help plan:</span> ${afterMeeting.schoolHelp}</div>` : ""}
+    ${afterMeeting.homeStrategies ? `<div class="info-item"><span class="label">Home strategies:</span> ${afterMeeting.homeStrategies}</div>` : ""}
+    ${afterMeeting.childFeelings ? `<div class="info-item"><span class="label">Child's feelings about plan:</span> ${afterMeeting.childFeelings}</div>` : ""}
+  </div>
+
+  <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #999;">
+    <p>Generated by IEP Meeting Preparation Tool</p>
+  </footer>
+</body>
+</html>
+    `;
+
+    const blob = new Blob([html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `iep-tracker-${studentInfo.name || "export"}-${new Date().toISOString().split("T")[0]}.json`;
+    a.download = `IEP-Meeting-${studentInfo.name || "export"}-${new Date().toISOString().split("T")[0]}.html`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Data exported successfully!");
+    toast.success("Data exported as printable document!");
   };
 
   const renderTabContent = () => {
