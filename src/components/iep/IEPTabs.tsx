@@ -9,7 +9,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 
 export type TabId = 
   | "snapshot" 
@@ -44,6 +44,9 @@ interface IEPTabsProps {
 
 const IEPTabs = ({ activeTab, onTabChange }: IEPTabsProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  
   const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
   
   // Calculate slider position based on current tab (0 to 100)
@@ -61,6 +64,73 @@ const IEPTabs = ({ activeTab, onTabChange }: IEPTabsProps) => {
     onTabChange(tabs[newIndex].id);
   };
 
+  // Handle drag to change tab
+  const handleDrag = useCallback((clientX: number) => {
+    if (!trackRef.current) return;
+    
+    const rect = trackRef.current.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    
+    // Convert percentage to tab index
+    const tabIndex = Math.round((percentage / 100) * (tabs.length - 1));
+    const clampedIndex = Math.max(0, Math.min(tabs.length - 1, tabIndex));
+    
+    if (tabs[clampedIndex].id !== activeTab) {
+      onTabChange(tabs[clampedIndex].id);
+    }
+  }, [activeTab, onTabChange]);
+
+  // Mouse event handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    handleDrag(e.clientX);
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (isDragging) {
+      handleDrag(e.clientX);
+    }
+  }, [isDragging, handleDrag]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Touch event handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    handleDrag(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (isDragging) {
+      handleDrag(e.touches[0].clientX);
+    }
+  }, [isDragging, handleDrag]);
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Add/remove global event listeners for drag
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('touchmove', handleTouchMove);
+      window.addEventListener('touchend', handleTouchEnd);
+    }
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
+
   // Scroll active tab into view
   useEffect(() => {
     if (scrollRef.current) {
@@ -70,6 +140,11 @@ const IEPTabs = ({ activeTab, onTabChange }: IEPTabsProps) => {
       }
     }
   }, [activeTab]);
+
+  // Handle click on track
+  const handleTrackClick = (e: React.MouseEvent) => {
+    handleDrag(e.clientX);
+  };
 
   return (
     <div className="bg-primary">
@@ -106,13 +181,19 @@ const IEPTabs = ({ activeTab, onTabChange }: IEPTabsProps) => {
           </button>
           
           {/* Slider Track */}
-          <div className="flex-1 h-3 bg-[#1a3a5c] rounded-full relative">
+          <div 
+            ref={trackRef}
+            className="flex-1 h-3 bg-[#1a3a5c] rounded-full relative cursor-pointer"
+            onClick={handleTrackClick}
+          >
             {/* Slider Thumb/Handle */}
             <div 
-              className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-md cursor-pointer transition-all duration-300 hover:scale-110"
+              className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-md cursor-grab transition-transform duration-100 hover:scale-110 ${isDragging ? 'cursor-grabbing scale-110' : ''}`}
               style={{ 
-                left: `calc(${sliderPosition}% - 8px)`,
+                left: `calc(${sliderPosition}% - 10px)`,
               }}
+              onMouseDown={handleMouseDown}
+              onTouchStart={handleTouchStart}
             />
           </div>
           
