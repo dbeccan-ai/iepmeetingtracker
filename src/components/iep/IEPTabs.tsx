@@ -59,10 +59,10 @@ const IEPTabs = ({ activeTab, onTabChange, progress }: IEPTabsProps) => {
   };
 
   return (
-    <div className="bg-background">
+    <div className="bg-primary">
       <div className="max-w-7xl mx-auto">
         {/* Tab Navigation */}
-        <nav className="flex items-center border-b border-foreground/20">
+        <nav className="flex items-center border-b border-white/20">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -78,23 +78,23 @@ const IEPTabs = ({ activeTab, onTabChange, progress }: IEPTabsProps) => {
         </nav>
 
         {/* Progress Bar with Navigation Arrows */}
-        <div className="flex items-center gap-2 px-4 py-3">
+        <div className="flex items-center gap-0 px-2 py-3">
           <button 
             onClick={() => navigateTab("left")}
-            className="p-1 hover:bg-foreground/20 rounded transition-colors text-foreground"
+            className="p-2 text-white hover:text-white/80 transition-colors"
             title="Previous tab"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <div className="flex-1 iep-progress-bar">
+          <div className="flex-1 h-3 bg-[#1a3a5c] rounded-full overflow-hidden">
             <div 
-              className="iep-progress-fill" 
+              className="h-full bg-[#2d5a7b] rounded-full transition-all duration-300" 
               style={{ width: `${progress}%` }}
             />
           </div>
           <button 
             onClick={() => navigateTab("right")}
-            className="p-1 hover:bg-foreground/20 rounded transition-colors text-foreground"
+            className="p-2 text-white hover:text-white/80 transition-colors"
             title="Next tab"
           >
             <ChevronRight className="w-5 h-5" />
