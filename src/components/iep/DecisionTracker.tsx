@@ -51,7 +51,7 @@ const DecisionTracker = ({ decisions, onDecisionsChange }: DecisionTrackerProps)
       <div className="mb-6">
         <h2 className="iep-section-title">During-Meeting Decision Tracker</h2>
         <p className="text-sm text-muted-foreground">
-          Fill out during the meeting so you don't walk out thinking "Wait, what did we even decide?"
+          Fill this out during the meeting so you don't walk out thinking, "Wait, what did we even decide?"
         </p>
       </div>
 
@@ -60,88 +60,97 @@ const DecisionTracker = ({ decisions, onDecisionsChange }: DecisionTrackerProps)
         Add Decision
       </button>
 
-      {/* Table Header - Desktop */}
-      <div className="hidden lg:grid grid-cols-12 gap-3 mb-3 px-2">
-        <div className="col-span-2 text-sm font-semibold text-card-foreground">Topic / Issue</div>
-        <div className="col-span-2 text-sm font-semibold text-card-foreground">What the Team Said / Decided</div>
-        <div className="col-span-3 text-sm font-semibold text-card-foreground">Services/Changes Agreed On</div>
-        <div className="col-span-2 text-sm font-semibold text-card-foreground">Who is Responsible</div>
-        <div className="col-span-2 text-sm font-semibold text-card-foreground">By When</div>
-        <div className="col-span-1"></div>
+      {/* Table Header */}
+      <div className="hidden lg:grid grid-cols-[180px_1fr_1fr_160px_140px_50px] gap-4 mb-4 px-2">
+        <div className="text-sm font-semibold text-card-foreground">Topic / Issue</div>
+        <div className="text-sm font-semibold text-card-foreground">What the Team Said / Decided</div>
+        <div className="text-sm font-semibold text-card-foreground">Services/Changes Agreed On</div>
+        <div className="text-sm font-semibold text-card-foreground">Who is Responsible</div>
+        <div className="text-sm font-semibold text-card-foreground">By When</div>
+        <div></div>
       </div>
 
       {/* Decision Rows */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {decisions.map((decision) => (
           <div
             key={decision.id}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-3 p-3 bg-muted/30 rounded-lg items-start"
+            className="grid grid-cols-1 lg:grid-cols-[180px_1fr_1fr_160px_140px_50px] gap-4 items-start"
           >
-            <div className="lg:col-span-2">
+            {/* Topic/Issue */}
+            <div>
               <label className="lg:hidden iep-label">Topic / Issue</label>
               <input
                 type="text"
-                className="iep-input"
-                placeholder="Topic"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                placeholder="Reading Support"
                 value={decision.topic}
                 onChange={(e) => updateDecision(decision.id, "topic", e.target.value)}
-                list="topics-list"
+                list={`topics-list-${decision.id}`}
               />
-              <datalist id="topics-list">
+              <datalist id={`topics-list-${decision.id}`}>
                 {defaultTopics.map((topic) => (
                   <option key={topic} value={topic} />
                 ))}
               </datalist>
             </div>
-            <div className="lg:col-span-2">
+            
+            {/* What the Team Said / Decided */}
+            <div>
               <label className="lg:hidden iep-label">What the Team Said / Decided</label>
-              <input
-                type="text"
-                className="iep-input"
+              <textarea
+                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[60px] resize-y"
                 placeholder="What was discussed..."
                 value={decision.discussed}
                 onChange={(e) => updateDecision(decision.id, "discussed", e.target.value)}
               />
             </div>
-            <div className="lg:col-span-3">
+            
+            {/* Services/Changes Agreed On */}
+            <div>
               <label className="lg:hidden iep-label">Services/Changes Agreed On</label>
-              <input
-                type="text"
-                className="iep-input"
+              <textarea
+                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[60px] resize-y"
                 placeholder="What was agreed upon..."
                 value={decision.agreedOn}
                 onChange={(e) => updateDecision(decision.id, "agreedOn", e.target.value)}
               />
             </div>
-            <div className="lg:col-span-2">
+            
+            {/* Who is Responsible */}
+            <div>
               <label className="lg:hidden iep-label">Who is Responsible</label>
               <input
                 type="text"
-                className="iep-input"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                 placeholder="Name or role"
                 value={decision.responsible}
                 onChange={(e) => updateDecision(decision.id, "responsible", e.target.value)}
               />
             </div>
-            <div className="lg:col-span-2">
+            
+            {/* By When */}
+            <div>
               <label className="lg:hidden iep-label">By When</label>
               <div className="relative">
                 <input
                   type="date"
-                  className="iep-input pr-10"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-card-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 pr-10"
                   value={decision.byWhen}
                   onChange={(e) => updateDecision(decision.id, "byWhen", e.target.value)}
                 />
                 <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               </div>
             </div>
-            <div className="lg:col-span-1 flex justify-end">
+            
+            {/* Delete Button */}
+            <div className="flex justify-center items-start pt-2">
               <button
                 onClick={() => removeDecision(decision.id)}
-                className="iep-button-delete"
+                className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
                 aria-label="Remove decision"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-5 h-5" />
               </button>
             </div>
           </div>
