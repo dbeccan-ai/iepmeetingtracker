@@ -45,14 +45,17 @@ interface IEPTabsProps {
 const IEPTabs = ({ activeTab, onTabChange, progress }: IEPTabsProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const scrollTabs = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const scrollAmount = 200;
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
+  const navigateTab = (direction: "left" | "right") => {
+    const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
+    let newIndex: number;
+
+    if (direction === "left") {
+      newIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
+    } else {
+      newIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
     }
+
+    onTabChange(tabs[newIndex].id);
   };
 
   return (
@@ -74,11 +77,12 @@ const IEPTabs = ({ activeTab, onTabChange, progress }: IEPTabsProps) => {
           ))}
         </nav>
 
-        {/* Progress Bar */}
+        {/* Progress Bar with Navigation Arrows */}
         <div className="flex items-center gap-2 px-4 py-3">
           <button 
-            onClick={() => scrollTabs("left")}
+            onClick={() => navigateTab("left")}
             className="p-1 hover:bg-foreground/20 rounded transition-colors text-foreground"
+            title="Previous tab"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -89,8 +93,9 @@ const IEPTabs = ({ activeTab, onTabChange, progress }: IEPTabsProps) => {
             />
           </div>
           <button 
-            onClick={() => scrollTabs("right")}
+            onClick={() => navigateTab("right")}
             className="p-1 hover:bg-foreground/20 rounded transition-colors text-foreground"
+            title="Next tab"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
