@@ -9,6 +9,7 @@ import QuestionBank from "@/components/iep/QuestionBank";
 import DecisionTracker, { Decision } from "@/components/iep/DecisionTracker";
 import FollowUpTracker from "@/components/iep/FollowUpTracker";
 import FamilyDiscussions from "@/components/iep/FamilyDiscussions";
+import PrintableForm from "@/components/iep/PrintableForm";
 
 // Initial data
 const initialDocuments = [
@@ -569,15 +570,33 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <IEPHeader onSave={handleSave} onExport={handleExport} onPrint={handlePrint} />
-      <IEPTabs
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        progress={calculateProgress()}
+      {/* Screen-only content */}
+      <div className="screen-only">
+        <IEPHeader onSave={handleSave} onExport={handleExport} onPrint={handlePrint} />
+        <IEPTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          progress={calculateProgress()}
+        />
+        <main className="max-w-7xl mx-auto px-4 py-6">
+          {renderTabContent()}
+        </main>
+      </div>
+
+      {/* Print-only content - shows all sections */}
+      <PrintableForm
+        studentInfo={studentInfo}
+        contactInfo={contactInfo}
+        attendees={attendees}
+        documents={documents}
+        reflection={reflection}
+        questionCategories={questionCategories}
+        decisions={decisions}
+        immediateItems={immediateItems}
+        weekItems={weekItems}
+        beforeMeeting={beforeMeeting}
+        afterMeeting={afterMeeting}
       />
-      <main className="max-w-7xl mx-auto px-4 py-6">
-        {renderTabContent()}
-      </main>
     </div>
   );
 };
