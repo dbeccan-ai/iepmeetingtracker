@@ -59,6 +59,14 @@ export const translations = {
     strengths: "What are your child's strengths?",
     challenges: "What challenges do you see at home?",
     homeSupports: "What supports are working at home?",
+    uploadDocuments: "Upload Supporting Documents",
+    uploadDesc: "Upload past IEPs, report cards, evaluations, or other supporting documents",
+    selectFiles: "Select Files",
+    dragDrop: "or drag and drop files here",
+    supportedFormats: "PDF, DOC, DOCX, JPG, PNG (max 10MB each)",
+    uploadedFiles: "Uploaded Files",
+    noFilesUploaded: "No files uploaded yet",
+    removeFile: "Remove",
     
     // Decision Tracker
     decisionTrackerTitle: "During-Meeting Decision Tracker",
@@ -156,6 +164,14 @@ export const translations = {
     strengths: "¿Cuáles son las fortalezas de su hijo/a?",
     challenges: "¿Qué desafíos observa en casa?",
     homeSupports: "¿Qué apoyos funcionan en casa?",
+    uploadDocuments: "Subir Documentos de Apoyo",
+    uploadDesc: "Suba IEPs anteriores, boletas de calificaciones, evaluaciones u otros documentos",
+    selectFiles: "Seleccionar Archivos",
+    dragDrop: "o arrastre y suelte archivos aquí",
+    supportedFormats: "PDF, DOC, DOCX, JPG, PNG (máx 10MB cada uno)",
+    uploadedFiles: "Archivos Subidos",
+    noFilesUploaded: "No hay archivos subidos aún",
+    removeFile: "Eliminar",
     
     // Decision Tracker
     decisionTrackerTitle: "Registro de Decisiones Durante la Reunión",
@@ -253,6 +269,14 @@ export const translations = {
     strengths: "您孩子的优势是什么？",
     challenges: "您在家中观察到哪些挑战？",
     homeSupports: "哪些家庭支持措施有效？",
+    uploadDocuments: "上传支持文件",
+    uploadDesc: "上传过去的IEP、成绩单、评估报告或其他支持文件",
+    selectFiles: "选择文件",
+    dragDrop: "或将文件拖放到此处",
+    supportedFormats: "PDF、DOC、DOCX、JPG、PNG（每个最大10MB）",
+    uploadedFiles: "已上传文件",
+    noFilesUploaded: "尚未上传文件",
+    removeFile: "删除",
     
     // Decision Tracker
     decisionTrackerTitle: "会议期间决策追踪器",

@@ -218,6 +218,7 @@ const Index = () => {
     challenges: "",
     homeSupports: "",
   });
+  const [uploadedFiles, setUploadedFiles] = useState<{ id: string; name: string; size: number; type: string; file: File }[]>([]);
 
   // Question Bank state
   const [questionCategories, setQuestionCategories] = useState(initialQuestionCategories);
@@ -517,8 +518,10 @@ const Index = () => {
           <PreMeetingPrep
             documents={documents}
             reflection={reflection}
+            uploadedFiles={uploadedFiles}
             onDocumentsChange={setDocuments}
             onReflectionChange={setReflection}
+            onUploadedFilesChange={setUploadedFiles}
           />
         );
       case "questions":

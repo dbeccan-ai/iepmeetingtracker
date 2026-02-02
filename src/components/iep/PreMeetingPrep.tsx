@@ -1,4 +1,7 @@
-import { Check } from "lucide-react";
+import { Check, Upload, X, FileText, Image } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
+import { useRef, useState, useCallback } from "react";
+import { Button } from "@/components/ui/button";
 
 interface DocumentItem {
   id: string;
@@ -13,19 +16,35 @@ interface ParentReflection {
   homeSupports: string;
 }
 
+interface UploadedFile {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  file: File;
+}
+
 interface PreMeetingPrepProps {
   documents: DocumentItem[];
   reflection: ParentReflection;
+  uploadedFiles: UploadedFile[];
   onDocumentsChange: (documents: DocumentItem[]) => void;
   onReflectionChange: (reflection: ParentReflection) => void;
+  onUploadedFilesChange: (files: UploadedFile[]) => void;
 }
 
 const PreMeetingPrep = ({
   documents,
   reflection,
+  uploadedFiles,
   onDocumentsChange,
   onReflectionChange,
+  onUploadedFilesChange,
 }: PreMeetingPrepProps) => {
+  const { t } = useLanguage();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+
   const toggleDocument = (id: string) => {
     onDocumentsChange(
       documents.map((doc) =>
@@ -34,13 +53,86 @@ const PreMeetingPrep = ({
     );
   };
 
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  };
+
+  const isValidFile = (file: File) => {
+    const validTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "image/jpeg",
+      "image/png",
+    ];
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    return validTypes.includes(file.type) && file.size <= maxSize;
+  };
+
+  const handleFiles = useCallback((files: FileList | null) => {
+    if (!files) return;
+    
+    const newFiles: UploadedFile[] = [];
+    Array.from(files).forEach((file) => {
+      if (isValidFile(file)) {
+        newFiles.push({
+          id: crypto.randomUUID(),
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          file: file,
+        });
+      }
+    });
+    
+    if (newFiles.length > 0) {
+      onUploadedFilesChange([...uploadedFiles, ...newFiles]);
+    }
+  }, [uploadedFiles, onUploadedFilesChange]);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFiles(e.target.files);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    handleFiles(e.dataTransfer.files);
+  };
+
+  const removeFile = (id: string) => {
+    onUploadedFilesChange(uploadedFiles.filter((f) => f.id !== id));
+  };
+
+  const getFileIcon = (type: string) => {
+    if (type.startsWith("image/")) {
+      return <Image className="w-5 h-5 text-primary" />;
+    }
+    return <FileText className="w-5 h-5 text-primary" />;
+  };
+
   return (
     <div className="space-y-6">
       {/* Documents to Gather */}
       <div className="iep-card">
-        <h2 className="iep-section-title">Documents to Gather</h2>
+        <h2 className="iep-section-title">{t("documentsTitle")}</h2>
         <p className="text-sm text-muted-foreground mb-4">
-          Check off as you collect each document
+          {t("documentsDesc")}
         </p>
 
         <div className="space-y-2">
@@ -64,17 +156,96 @@ const PreMeetingPrep = ({
         </div>
       </div>
 
+      {/* Upload Documents */}
+      <div className="iep-card">
+        <h2 className="iep-section-title">{t("uploadDocuments")}</h2>
+        <p className="text-sm text-muted-foreground mb-4">
+          {t("uploadDesc")}
+        </p>
+
+        {/* Drop Zone */}
+        <div
+          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+            isDragOver
+              ? "border-primary bg-primary/5"
+              : "border-border hover:border-primary/50"
+          }`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <Upload className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => fileInputRef.current?.click()}
+            className="mb-2"
+          >
+            {t("selectFiles")}
+          </Button>
+          <p className="text-sm text-muted-foreground">{t("dragDrop")}</p>
+          <p className="text-xs text-muted-foreground mt-2">{t("supportedFormats")}</p>
+        </div>
+
+        {/* Uploaded Files List */}
+        <div className="mt-6">
+          <h3 className="font-medium mb-3">{t("uploadedFiles")}</h3>
+          {uploadedFiles.length === 0 ? (
+            <p className="text-sm text-muted-foreground italic">{t("noFilesUploaded")}</p>
+          ) : (
+            <div className="space-y-2">
+              {uploadedFiles.map((file) => (
+                <div
+                  key={file.id}
+                  className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    {getFileIcon(file.type)}
+                    <div>
+                      <p className="text-sm font-medium truncate max-w-[200px] sm:max-w-[300px]">
+                        {file.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatFileSize(file.size)}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeFile(file.id)}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <X className="w-4 h-4" />
+                    <span className="sr-only">{t("removeFile")}</span>
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Parent Reflection */}
       <div className="iep-card">
-        <h2 className="iep-section-title">Parent Reflection</h2>
+        <h2 className="iep-section-title">{t("reflectionTitle")}</h2>
         <p className="text-sm text-muted-foreground mb-6">
-          Take time to reflect on your child's needs and strengths
+          {t("reflectionDesc")}
         </p>
 
         <div className="space-y-6">
           <div>
             <label className="iep-label font-semibold">
-              My top 3 concerns for my child right now are:
+              {t("topConcerns")}
             </label>
             <textarea
               className="iep-textarea"
@@ -88,11 +259,11 @@ const PreMeetingPrep = ({
 
           <div>
             <label className="iep-label font-semibold">
-              My child's strengths (academic, social, personality):
+              {t("strengths")}
             </label>
             <textarea
               className="iep-textarea"
-              placeholder="What does your child do well? What do they enjoy?"
+              placeholder=""
               value={reflection.strengths}
               onChange={(e) =>
                 onReflectionChange({ ...reflection, strengths: e.target.value })
@@ -102,11 +273,11 @@ const PreMeetingPrep = ({
 
           <div>
             <label className="iep-label font-semibold">
-              What seems hardest for my child at school:
+              {t("challenges")}
             </label>
             <textarea
               className="iep-textarea"
-              placeholder="What challenges does your child face? What causes frustration or stress?"
+              placeholder=""
               value={reflection.challenges}
               onChange={(e) =>
                 onReflectionChange({ ...reflection, challenges: e.target.value })
@@ -116,11 +287,11 @@ const PreMeetingPrep = ({
 
           <div>
             <label className="iep-label font-semibold">
-              Supports that seem to help at home:
+              {t("homeSupports")}
             </label>
             <textarea
               className="iep-textarea"
-              placeholder="What strategies, tools, or approaches work well for your child?"
+              placeholder=""
               value={reflection.homeSupports}
               onChange={(e) =>
                 onReflectionChange({ ...reflection, homeSupports: e.target.value })
