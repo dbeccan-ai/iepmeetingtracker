@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface QuestionCategory {
   id: string;
@@ -15,6 +16,7 @@ interface QuestionBankProps {
 }
 
 const QuestionBank = ({ categories, onNotesChange }: QuestionBankProps) => {
+  const { t } = useLanguage();
   const [openCategory, setOpenCategory] = useState<string | null>(categories[0]?.id || null);
 
   const toggleCategory = (id: string) => {
@@ -25,10 +27,9 @@ const QuestionBank = ({ categories, onNotesChange }: QuestionBankProps) => {
     <div className="space-y-4">
       {/* Info Box */}
       <div className="iep-info-box">
-        <h3 className="font-semibold text-blue-800 mb-2">How to Use This Question Bank</h3>
+        <h3 className="font-semibold text-blue-800 mb-2">{t("questionBankInfo")}</h3>
         <p className="text-sm text-blue-700">
-          You won't ask everything in one meeting. Use this as a reference to find questions relevant to your situation. 
-          Take notes in the text areas to capture answers and important information during the meeting.
+          {t("questionBankDesc")}
         </p>
       </div>
 
@@ -46,7 +47,7 @@ const QuestionBank = ({ categories, onNotesChange }: QuestionBankProps) => {
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-sm bg-white/80 px-2 py-1 rounded text-accent-foreground">
-                  {category.questions.length} questions
+                  {category.questions.length} {t("questions")}
                 </span>
                 <ChevronDown
                   className={`w-5 h-5 text-accent-foreground transition-transform ${
@@ -59,7 +60,7 @@ const QuestionBank = ({ categories, onNotesChange }: QuestionBankProps) => {
             {openCategory === category.id && (
               <div className="p-4 border-t border-accent/20">
                 <div className="iep-info-box mb-4">
-                  <h4 className="font-semibold text-blue-800 mb-2">Questions to Consider:</h4>
+                  <h4 className="font-semibold text-blue-800 mb-2">{t("questionsToConsider")}</h4>
                   <ul className="space-y-2 text-sm text-blue-700">
                     {category.questions.map((question, idx) => (
                       <li key={idx} className="flex gap-2">
@@ -71,10 +72,10 @@ const QuestionBank = ({ categories, onNotesChange }: QuestionBankProps) => {
                 </div>
 
                 <div>
-                  <label className="iep-label font-semibold">Notes & Answers:</label>
+                  <label className="iep-label font-semibold">{t("notesAndAnswers")}</label>
                   <textarea
                     className="iep-textarea"
-                    placeholder="Take notes here during or after the meeting..."
+                    placeholder={t("notesPlaceholder")}
                     value={category.notes}
                     onChange={(e) => onNotesChange(category.id, e.target.value)}
                   />
