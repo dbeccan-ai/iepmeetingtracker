@@ -1,4 +1,5 @@
 import { Calendar } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface StudentInfo {
   name: string;
@@ -28,32 +29,34 @@ const MeetingSnapshot = ({
   onStudentInfoChange,
   onContactInfoChange,
 }: MeetingSnapshotProps) => {
+  const { t } = useLanguage();
+
   const meetingTypes = [
-    "Initial IEP",
-    "Annual Review",
-    "Triennial Review",
-    "Amendment",
-    "Manifestation Determination",
-    "Transition Planning",
-    "Other",
+    { value: "Initial IEP", label: t("initialIep") },
+    { value: "Annual Review", label: t("annualReview") },
+    { value: "Triennial Review", label: t("triennialReview") },
+    { value: "Amendment", label: t("amendment") },
+    { value: "Manifestation Determination", label: t("manifestation") },
+    { value: "Transition Planning", label: t("transitionPlanning") },
+    { value: "Other", label: t("other") },
   ];
 
   return (
     <div className="space-y-6">
       <div className="iep-card">
-        <h2 className="iep-section-title">IEP Meeting Snapshot</h2>
+        <h2 className="iep-section-title">{t("meetingSnapshotTitle")}</h2>
 
         {/* Student Information */}
         <div className="mb-8">
-          <h3 className="iep-subsection-title">Student Information</h3>
+          <h3 className="iep-subsection-title">{t("studentInfo")}</h3>
 
           <div className="space-y-4">
             <div>
-              <label className="iep-label">Student Name</label>
+              <label className="iep-label">{t("studentName")}</label>
               <input
                 type="text"
                 className="iep-input"
-                placeholder="Enter student's full name"
+                placeholder={t("studentNamePlaceholder")}
                 value={studentInfo.name}
                 onChange={(e) =>
                   onStudentInfoChange({ ...studentInfo, name: e.target.value })
@@ -63,11 +66,11 @@ const MeetingSnapshot = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="iep-label">Grade</label>
+                <label className="iep-label">{t("grade")}</label>
                 <input
                   type="text"
                   className="iep-input"
-                  placeholder="e.g., 3rd, 7th, 11th"
+                  placeholder={t("gradePlaceholder")}
                   value={studentInfo.grade}
                   onChange={(e) =>
                     onStudentInfoChange({ ...studentInfo, grade: e.target.value })
@@ -75,11 +78,11 @@ const MeetingSnapshot = ({
                 />
               </div>
               <div>
-                <label className="iep-label">School</label>
+                <label className="iep-label">{t("school")}</label>
                 <input
                   type="text"
                   className="iep-input"
-                  placeholder="School name"
+                  placeholder={t("schoolPlaceholder")}
                   value={studentInfo.school}
                   onChange={(e) =>
                     onStudentInfoChange({ ...studentInfo, school: e.target.value })
@@ -90,7 +93,7 @@ const MeetingSnapshot = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="iep-label">Date of IEP Meeting</label>
+                <label className="iep-label">{t("meetingDate")}</label>
                 <div className="relative">
                   <input
                     type="date"
@@ -104,7 +107,7 @@ const MeetingSnapshot = ({
                 </div>
               </div>
               <div>
-                <label className="iep-label">Type of Meeting</label>
+                <label className="iep-label">{t("meetingType")}</label>
                 <select
                   className="iep-select"
                   value={studentInfo.meetingType}
@@ -112,10 +115,10 @@ const MeetingSnapshot = ({
                     onStudentInfoChange({ ...studentInfo, meetingType: e.target.value })
                   }
                 >
-                  <option value="">Select type...</option>
+                  <option value="">{t("selectType")}</option>
                   {meetingTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
+                    <option key={type.value} value={type.value}>
+                      {type.label}
                     </option>
                   ))}
                 </select>
@@ -123,10 +126,10 @@ const MeetingSnapshot = ({
             </div>
 
             <div>
-              <label className="iep-label">Primary Concern(s)</label>
+              <label className="iep-label">{t("primaryConcerns")}</label>
               <textarea
                 className="iep-textarea"
-                placeholder="What are your main concerns going into this meeting?"
+                placeholder={t("primaryConcernsPlaceholder")}
                 value={studentInfo.primaryConcerns}
                 onChange={(e) =>
                   onStudentInfoChange({ ...studentInfo, primaryConcerns: e.target.value })
@@ -138,18 +141,18 @@ const MeetingSnapshot = ({
 
         {/* Main Contact at School */}
         <div>
-          <h3 className="iep-subsection-title">Main Contact at School</h3>
+          <h3 className="iep-subsection-title">{t("mainContact")}</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Case Manager / Special Ed Teacher
+            {t("caseManager")}
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="iep-label">Name</label>
+              <label className="iep-label">{t("contactName")}</label>
               <input
                 type="text"
                 className="iep-input"
-                placeholder="Contact name"
+                placeholder={t("contactNamePlaceholder")}
                 value={contactInfo.name}
                 onChange={(e) =>
                   onContactInfoChange({ ...contactInfo, name: e.target.value })
@@ -157,11 +160,11 @@ const MeetingSnapshot = ({
               />
             </div>
             <div>
-              <label className="iep-label">Phone</label>
+              <label className="iep-label">{t("phone")}</label>
               <input
                 type="tel"
                 className="iep-input"
-                placeholder="(123) 456-7890"
+                placeholder={t("phonePlaceholder")}
                 value={contactInfo.phone}
                 onChange={(e) =>
                   onContactInfoChange({ ...contactInfo, phone: e.target.value })
@@ -169,11 +172,11 @@ const MeetingSnapshot = ({
               />
             </div>
             <div>
-              <label className="iep-label">Email</label>
+              <label className="iep-label">{t("email")}</label>
               <input
                 type="email"
                 className="iep-input"
-                placeholder="email@school.edu"
+                placeholder={t("emailPlaceholder")}
                 value={contactInfo.email}
                 onChange={(e) =>
                   onContactInfoChange({ ...contactInfo, email: e.target.value })

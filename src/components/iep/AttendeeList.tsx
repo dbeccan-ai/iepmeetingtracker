@@ -1,4 +1,5 @@
 import { Plus, Trash2 } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export interface Attendee {
   id: string;
@@ -13,21 +14,23 @@ interface AttendeeListProps {
   onAttendeesChange: (attendees: Attendee[]) => void;
 }
 
-const defaultRoles = [
-  "Parent/Guardian",
-  "Student (if appropriate)",
-  "Special Education Teacher/Case Manager",
-  "General Education Teacher",
-  "School Psychologist",
-  "Related Service Providers (OT, PT, Speech)",
-  "Administrator (AP, Principal, SpEd Coordinator)",
-  "District Representative",
-  "Interpreter (if needed)",
-  "Advocate (if parent invited one)",
-  "Others (Tutor, Behavior Specialist, etc.)",
-];
-
 const AttendeeList = ({ attendees, onAttendeesChange }: AttendeeListProps) => {
+  const { t } = useLanguage();
+
+  const defaultRoles = [
+    t("roleParent"),
+    t("roleStudent"),
+    t("roleSpecialEd"),
+    t("roleGenEd"),
+    t("rolePsychologist"),
+    t("roleRelated"),
+    t("roleAdmin"),
+    t("roleDistrict"),
+    t("roleInterpreter"),
+    t("roleAdvocate"),
+    t("roleOther"),
+  ];
+
   const addPerson = () => {
     const newAttendee: Attendee = {
       id: crypto.randomUUID(),
@@ -53,23 +56,23 @@ const AttendeeList = ({ attendees, onAttendeesChange }: AttendeeListProps) => {
     <div className="iep-card">
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h2 className="iep-section-title mb-1">Who Should Be at the IEP Meeting?</h2>
+          <h2 className="iep-section-title mb-1">{t("attendeeListTitle")}</h2>
           <p className="text-sm text-muted-foreground">
-            Use this as a checklist and contact tracker
+            {t("attendeeListDesc")}
           </p>
         </div>
         <button onClick={addPerson} className="iep-button-primary">
           <Plus className="w-4 h-4" />
-          Add Person
+          {t("addPerson")}
         </button>
       </div>
 
       {/* Table Header */}
       <div className="hidden md:grid grid-cols-12 gap-4 mb-3 px-2">
-        <div className="col-span-3 text-sm font-semibold text-card-foreground">Role</div>
-        <div className="col-span-2 text-sm font-semibold text-card-foreground">Name</div>
-        <div className="col-span-2 text-sm font-semibold text-card-foreground">Attending?</div>
-        <div className="col-span-4 text-sm font-semibold text-card-foreground">Contact Info / Notes</div>
+        <div className="col-span-3 text-sm font-semibold text-card-foreground">{t("role")}</div>
+        <div className="col-span-2 text-sm font-semibold text-card-foreground">{t("name")}</div>
+        <div className="col-span-2 text-sm font-semibold text-card-foreground">{t("attending")}</div>
+        <div className="col-span-4 text-sm font-semibold text-card-foreground">{t("contactInfo")}</div>
         <div className="col-span-1"></div>
       </div>
 
@@ -81,11 +84,11 @@ const AttendeeList = ({ attendees, onAttendeesChange }: AttendeeListProps) => {
             className="grid grid-cols-1 md:grid-cols-12 gap-3 p-3 bg-muted/30 rounded-lg items-center"
           >
             <div className="md:col-span-3">
-              <label className="md:hidden iep-label">Role</label>
+              <label className="md:hidden iep-label">{t("role")}</label>
               <input
                 type="text"
                 className="iep-input"
-                placeholder="Role"
+                placeholder={t("rolePlaceholder")}
                 value={attendee.role}
                 onChange={(e) => updateAttendee(attendee.id, "role", e.target.value)}
                 list="roles-list"
@@ -97,35 +100,35 @@ const AttendeeList = ({ attendees, onAttendeesChange }: AttendeeListProps) => {
               </datalist>
             </div>
             <div className="md:col-span-2">
-              <label className="md:hidden iep-label">Name</label>
+              <label className="md:hidden iep-label">{t("name")}</label>
               <input
                 type="text"
                 className="iep-input"
-                placeholder="Name"
+                placeholder={t("namePlaceholder")}
                 value={attendee.name}
                 onChange={(e) => updateAttendee(attendee.id, "name", e.target.value)}
               />
             </div>
             <div className="md:col-span-2">
-              <label className="md:hidden iep-label">Attending?</label>
+              <label className="md:hidden iep-label">{t("attending")}</label>
               <select
                 className="iep-select"
                 value={attendee.attending}
                 onChange={(e) => updateAttendee(attendee.id, "attending", e.target.value)}
               >
                 <option value="">-</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-                <option value="maybe">Maybe</option>
-                <option value="virtual">Virtual</option>
+                <option value="yes">{t("yes")}</option>
+                <option value="no">{t("no")}</option>
+                <option value="maybe">{t("maybe")}</option>
+                <option value="virtual">{t("virtual")}</option>
               </select>
             </div>
             <div className="md:col-span-4">
-              <label className="md:hidden iep-label">Contact Info / Notes</label>
+              <label className="md:hidden iep-label">{t("contactInfo")}</label>
               <input
                 type="text"
                 className="iep-input"
-                placeholder="Phone, email, or notes"
+                placeholder={t("contactPlaceholder")}
                 value={attendee.contactInfo}
                 onChange={(e) => updateAttendee(attendee.id, "contactInfo", e.target.value)}
               />
@@ -145,7 +148,7 @@ const AttendeeList = ({ attendees, onAttendeesChange }: AttendeeListProps) => {
 
       {attendees.length === 0 && (
         <p className="text-center text-muted-foreground py-8">
-          No attendees added yet. Click "Add Person" to start building your list.
+          {t("noAttendees")}
         </p>
       )}
     </div>

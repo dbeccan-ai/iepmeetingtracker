@@ -1,4 +1,5 @@
 import { Check, Plus, Trash2, Calendar } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface ChecklistItem {
   id: string;
@@ -31,6 +32,8 @@ const FollowUpTracker = ({
   onWeekChange,
   onMonthlyLogsChange,
 }: FollowUpTrackerProps) => {
+  const { t } = useLanguage();
+
   const toggleItem = (
     items: ChecklistItem[],
     onChange: (items: ChecklistItem[]) => void,
@@ -118,15 +121,15 @@ const FollowUpTracker = ({
     <div className="space-y-6">
       {/* After the IEP Card */}
       <div className="iep-card">
-        <h2 className="iep-section-title">After the IEP – Follow-Up Tracker</h2>
+        <h2 className="iep-section-title">{t("followUpTitle")}</h2>
         <p className="text-sm text-muted-foreground mb-6">
-          Stay organized with step-by-step follow-up actions
+          {t("followUpDesc")}
         </p>
 
         {/* Immediately After Meeting */}
         <div className="mb-8">
           <h3 className="iep-subsection-title">
-            Immediately After Meeting (Same Day or Within 24-48 Hours)
+            {t("immediatelyAfter")}
           </h3>
           <ChecklistSection items={immediateItems} onChange={onImmediateChange} />
         </div>
@@ -134,7 +137,7 @@ const FollowUpTracker = ({
 
       {/* Within 1-2 Weeks */}
       <div className="iep-card">
-        <h3 className="iep-subsection-title">Within 1–2 Weeks</h3>
+        <h3 className="iep-subsection-title">{t("within1to2Weeks")}</h3>
         <ChecklistSection items={weekItems} onChange={onWeekChange} />
       </div>
 
@@ -142,20 +145,20 @@ const FollowUpTracker = ({
       <div className="iep-card">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h3 className="iep-subsection-title">Ongoing Monitoring</h3>
+            <h3 className="iep-subsection-title">{t("ongoingMonitoring")}</h3>
             <p className="text-sm text-muted-foreground">
-              Track what you're seeing month by month
+              {t("ongoingMonitoringDesc")}
             </p>
           </div>
           <button onClick={addMonth} className="iep-button-primary">
             <Plus className="w-4 h-4" />
-            Add Month
+            {t("addMonth")}
           </button>
         </div>
 
         {monthlyLogs.length === 0 ? (
           <p className="text-center text-muted-foreground py-8">
-            No monthly logs yet. Click "Add Month" to start tracking.
+            {t("noMonthlyLogs")}
           </p>
         ) : (
           <div className="space-y-4">
@@ -171,7 +174,7 @@ const FollowUpTracker = ({
                     />
                     <textarea
                       className="iep-textarea"
-                      placeholder="What are you observing this month? Progress? Concerns?"
+                      placeholder={t("monthlyNotesPlaceholder")}
                       value={log.notes}
                       onChange={(e) => updateLog(log.id, "notes", e.target.value)}
                     />
