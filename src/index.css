@@ -182,3 +182,127 @@
     @apply bg-amber-50 border border-amber-200 rounded-lg p-4 text-card-foreground;
   }
 }
+
+/* Print Styles for IEP Form */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+
+  /* Hide non-essential elements */
+  header,
+  .iep-tab,
+  .no-print,
+  button:not(.print-show),
+  [role="tablist"] {
+    display: none !important;
+  }
+
+  /* Show all tab content for printing */
+  .print-all-sections {
+    display: block !important;
+  }
+
+  .print-section {
+    page-break-inside: avoid;
+    margin-bottom: 20pt;
+    border: 1pt solid #ccc;
+    padding: 15pt;
+    background: white !important;
+  }
+
+  .print-section-title {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #1a365d;
+    border-bottom: 2pt solid #d69e2e;
+    padding-bottom: 8pt;
+    margin-bottom: 12pt;
+  }
+
+  /* Form fields styling for print */
+  .iep-input,
+  .iep-textarea,
+  .iep-select {
+    border: 1pt solid #999 !important;
+    background: white !important;
+    min-height: 30pt;
+    padding: 8pt !important;
+  }
+
+  .iep-textarea {
+    min-height: 80pt !important;
+  }
+
+  /* Checkbox styling for print */
+  .iep-checkbox-label {
+    padding: 6pt 0;
+  }
+
+  .iep-checkbox-label > div:first-child {
+    width: 14pt !important;
+    height: 14pt !important;
+    border: 1.5pt solid #333 !important;
+    background: white !important;
+  }
+
+  /* Cards styling for print */
+  .iep-card {
+    box-shadow: none !important;
+    border: 1pt solid #ccc !important;
+    border-left: 3pt solid #d69e2e !important;
+    page-break-inside: avoid;
+  }
+
+  /* Table rows for attendee list, decision tracker */
+  .grid {
+    display: block !important;
+  }
+
+  /* Labels */
+  .iep-label {
+    font-weight: bold;
+    color: #333;
+  }
+
+  /* Info boxes */
+  .iep-info-box,
+  .iep-tip-box {
+    background: #f9f9f9 !important;
+    border: 1pt solid #ccc !important;
+    page-break-inside: avoid;
+  }
+
+  /* Page breaks */
+  .print-page-break {
+    page-break-before: always;
+  }
+
+  /* Header for printed form */
+  .print-header {
+    display: block !important;
+    text-align: center;
+    margin-bottom: 20pt;
+    padding-bottom: 15pt;
+    border-bottom: 2pt solid #2b6cb0;
+  }
+
+  .print-header h1 {
+    font-size: 18pt;
+    color: #2b6cb0;
+    margin-bottom: 5pt;
+  }
+
+  .print-header p {
+    font-size: 10pt;
+    color: #666;
+  }
+
+  /* Uploaded files section - hide file management buttons */
+  .iep-button-delete {
+    display: none !important;
+  }
+}

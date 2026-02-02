@@ -7,6 +7,8 @@ export const translations = {
     appSubtitle: "Organize your thoughts and questions before your child's IEP meeting",
     saveProgress: "Save Progress",
     export: "Export",
+    printForm: "Print Form",
+    printFormDesc: "Print the complete form for manual completion",
     
     // Tabs
     tabSnapshot: "Meeting Snapshot",
@@ -230,6 +232,8 @@ export const translations = {
     appSubtitle: "Organice sus pensamientos y preguntas antes de la reunión IEP de su hijo/a",
     saveProgress: "Guardar",
     export: "Exportar",
+    printForm: "Imprimir Formulario",
+    printFormDesc: "Imprima el formulario completo para completarlo manualmente",
     
     // Tabs
     tabSnapshot: "Resumen",
@@ -453,6 +457,8 @@ export const translations = {
     appSubtitle: "在孩子的IEP会议之前整理您的想法和问题",
     saveProgress: "保存",
     export: "导出",
+    printForm: "打印表格",
+    printFormDesc: "打印完整表格以便手动填写",
     
     // Tabs
     tabSnapshot: "会议概览",

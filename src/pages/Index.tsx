@@ -563,9 +563,13 @@ const Index = () => {
     }
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <IEPHeader onSave={handleSave} onExport={handleExport} />
+      <IEPHeader onSave={handleSave} onExport={handleExport} onPrint={handlePrint} />
       <IEPTabs
         activeTab={activeTab}
         onTabChange={setActiveTab}
