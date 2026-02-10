@@ -1,5 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import IEPHeader from "@/components/iep/IEPHeader";
 import IEPTabs, { TabId } from "@/components/iep/IEPTabs";
 import MeetingSnapshot from "@/components/iep/MeetingSnapshot";
@@ -190,6 +193,9 @@ const initialWeekItems: ChecklistItem[] = [
 ];
 
 const Index = () => {
+  const { user, loading: authLoading, signOut, isAdmin } = useAuth();
+  const navigate = useNavigate();
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>("snapshot");
 
   // Meeting Snapshot state
@@ -277,6 +283,53 @@ const Index = () => {
     return Math.round((filled / total) * 100);
   }, [studentInfo, contactInfo, documents, reflection]);
 
+  // Redirect to auth if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/auth");
+    }
+  }, [user, authLoading, navigate]);
+
+  // Load existing submission from database
+  useEffect(() => {
+    if (!user) return;
+    const loadSubmission = async () => {
+      const { data } = await supabase
+        .from("iep_submissions")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (data) {
+        setSubmissionId(data.id);
+        const si = data.student_info as any;
+        const ci = data.contact_info as any;
+        const att = data.attendees as any;
+        const prep = data.pre_meeting_prep as any;
+        const qn = data.question_notes as any;
+        const dec = data.decisions as any;
+        const fu = data.follow_up as any;
+        const fd = data.family_discussions as any;
+
+        if (si) setStudentInfo(si);
+        if (ci) setContactInfo(ci);
+        if (att && Array.isArray(att)) setAttendees(att);
+        if (prep?.documents) setDocuments(prep.documents);
+        if (prep?.reflection) setReflection(prep.reflection);
+        if (qn && Array.isArray(qn)) setQuestionCategories(qn);
+        if (dec && Array.isArray(dec)) setDecisions(dec);
+        if (fu?.immediateItems) setImmediateItems(fu.immediateItems);
+        if (fu?.weekItems) setWeekItems(fu.weekItems);
+        if (fu?.monthlyLogs) setMonthlyLogs(fu.monthlyLogs);
+        if (fd?.beforeMeeting) setBeforeMeeting(fd.beforeMeeting);
+        if (fd?.afterMeeting) setAfterMeeting(fd.afterMeeting);
+      }
+    };
+    loadSubmission();
+  }, [user]);
+
   const handleNotesChange = (categoryId: string, notes: string) => {
     setQuestionCategories(
       questionCategories.map((cat) =>
@@ -285,23 +338,43 @@ const Index = () => {
     );
   };
 
-  const handleSave = () => {
-    const data = {
-      studentInfo,
-      contactInfo,
-      attendees,
-      documents,
-      reflection,
-      questionCategories,
-      decisions,
-      immediateItems,
-      weekItems,
-      monthlyLogs,
-      beforeMeeting,
-      afterMeeting,
+  const handleSave = async () => {
+    if (!user) return;
+    
+    const payload = {
+      user_id: user.id,
+      student_name: studentInfo.name || null,
+      student_info: studentInfo as any,
+      contact_info: contactInfo as any,
+      attendees: attendees as any,
+      pre_meeting_prep: { documents, reflection } as any,
+      question_notes: questionCategories as any,
+      decisions: decisions as any,
+      follow_up: { immediateItems, weekItems, monthlyLogs } as any,
+      family_discussions: { beforeMeeting, afterMeeting } as any,
     };
-    localStorage.setItem("iep-tracker-data", JSON.stringify(data));
-    toast.success("Progress saved successfully!");
+
+    let error;
+    if (submissionId) {
+      ({ error } = await supabase
+        .from("iep_submissions")
+        .update(payload)
+        .eq("id", submissionId));
+    } else {
+      const { data, error: e } = await supabase
+        .from("iep_submissions")
+        .insert(payload)
+        .select("id")
+        .single();
+      error = e;
+      if (data) setSubmissionId(data.id);
+    }
+
+    if (error) {
+      toast.error("Failed to save: " + error.message);
+    } else {
+      toast.success("Progress saved successfully!");
+    }
   };
 
   const handleExport = () => {
