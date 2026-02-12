@@ -85,11 +85,12 @@ Deno.serve(async (req) => {
     });
 
     const resendData = await resendRes.json();
+    console.log("Resend API response:", JSON.stringify(resendData), "Status:", resendRes.status);
     if (!resendRes.ok) {
       throw new Error(`Resend API error [${resendRes.status}]: ${JSON.stringify(resendData)}`);
     }
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({ success: true, resendResponse: resendData }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: unknown) {
