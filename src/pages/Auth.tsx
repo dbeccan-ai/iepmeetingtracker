@@ -19,14 +19,21 @@ const Auth = () => {
     setLoading(true);
 
     if (isForgotPassword) {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success("Password reset email sent! Check your inbox.");
-        setIsForgotPassword(false);
+      try {
+        const res = await supabase.functions.invoke("send-reset-email", {
+          body: {
+            email,
+            redirectUrl: `${window.location.origin}/reset-password`,
+          },
+        });
+        if (res.error) {
+          toast.error("Failed to send reset email. Please try again.");
+        } else {
+          toast.success("Password reset email sent! Check your inbox.");
+          setIsForgotPassword(false);
+        }
+      } catch {
+        toast.error("Something went wrong. Please try again.");
       }
       setLoading(false);
       return;
